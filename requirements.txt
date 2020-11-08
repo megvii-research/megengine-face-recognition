@@ -1,0 +1,5 @@
+lmdb
+megengine>=1.0.0
+numpy
+opencv-python
+tqdm
