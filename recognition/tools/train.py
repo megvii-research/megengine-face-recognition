@@ -33,7 +33,7 @@ def adjust_learning_rate(opt, epoch, configs):
         configs["learning_rate_gamma"] ** bisect.bisect_right(configs["learning_rate_milestons"], epoch)
     )
     if dist.get_rank() == 0:
-        logger.info(f"epoch {epoch}, using learning rate {base_lr}")
+        logger.info(f"epoch {epoch}, using learning rate {base_lr:.3g}")
     for param_group in opt.param_groups:
         param_group["lr"] = base_lr
 
