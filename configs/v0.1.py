@@ -9,7 +9,7 @@ configs = {
     # ------------ IO Configuration ------------
     "base_dir": "/home/megstudio/workspace/megengine-face-recognition/model/v0.1",
     "dataset_dir": "/home/megstudio/workspace/megengine-face-recognition/dataset",
-    "log_interval": 100,
+    "log_interval": 1000,
     # ------------ Dataset Configuration ------------
     "dataset": "webface",
     "num_class": 10572,
