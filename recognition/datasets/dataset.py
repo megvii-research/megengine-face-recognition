@@ -6,7 +6,7 @@ import lmdb
 import numpy as np
 from megengine.data.dataset.meta_dataset import MapDataset
 
-DATASET_BASE_DIR = "/home/megstudio/workspace/dataset"
+DATASET_BASE_DIR = "/home/megstudio/workspace/megengine-face-recognition/dataset"
 
 
 class TrainSet(MapDataset):
