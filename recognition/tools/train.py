@@ -13,7 +13,7 @@ import megengine.optimizer as optim
 
 from recognition.datasets import get_train_dataset
 from recognition.models import FaceRecognitionModel
-from recognition.tools.utils import AverageMeter, try_load_latest_checkpoint, load_config_from_path
+from recognition.tools.utils import AverageMeter, load_config_from_path, try_load_latest_checkpoint
 
 logger = mge.get_logger(__name__)
 

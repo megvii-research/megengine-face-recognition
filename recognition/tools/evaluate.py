@@ -143,7 +143,7 @@ def extract_feature_and_clean_noise(configs, inference_func):
     for index in np.where(facescrub_is_noise)[0]:
         center = facescrub_feature_center[facescrub_label[index]]
         disturb = np.random.uniform(-1e-5, 1e-5, (configs["feature_dim"],))
-        feat = center + disturb  # avoid identity features with minor disturb
+        feat = center + disturb  # avoid identical features with minor disturb
         feat = feat / np.linalg.norm(feat)
         facescrub_feature_store[index] = feat
 

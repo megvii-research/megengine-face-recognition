@@ -1,5 +1,6 @@
 import megengine.functional as F
 import megengine.module as M
+
 from .resnet import BasicBlock
 
 
@@ -8,6 +9,7 @@ class STN(M.Module):
     `"Spatial Transformer Networks" <https://arxiv.org/pdf/1506.02025.pdf>`_
     some detailed implements are highly simplified while good performance maintained
     """
+
     def __init__(self, input_size=112):
         assert input_size == 112, f"expected input_size == 112, got {input_size}"
         super().__init__()
