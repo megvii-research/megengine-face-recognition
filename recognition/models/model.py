@@ -4,7 +4,7 @@ import megengine.module as M
 from .head import get_head
 from .loss import get_loss
 from .resnet import get_backbone
-from .stn import STN
+from .stn import STN, GridSTN
 
 
 class FaceRecognitionModel(M.Module):
@@ -44,13 +44,20 @@ class FaceRecognitionModel(M.Module):
             feature_dim=configs["feature_dim"],
         )
 
-        if configs["use_stn"]:
+        if configs.get("use_stn", False):
             self.stn = STN()
             self.use_stn = True
+            self.use_grid_stn = False
+        elif configs.get("use_grid_stn", False):
+            self.stn = GridSTN()
+            self.use_stn = True
+            self.use_grid_stn = True
+            self.loss_mat3x3_ratio = configs["loss_mat3x3_ratio"]
         else:
             self.use_stn = False
+            self.use_grid_stn = False
 
-    def forward_embedding_only(self, images):
+    def forward_embedding_only(self, images, return_mat3x3s=False):
         """run forward pass without calculating loss, expected useful during evaluation.
 
         Args:
@@ -59,12 +66,18 @@ class FaceRecognitionModel(M.Module):
         Returns:
             embedding (Tensor): embedding
         """
-        if self.use_stn:
+
+        if self.use_grid_stn:
+            images, mat3x3s = self.stn(images)
+        elif self.use_stn:
             images = self.stn(images)
         feature_map = self.backbone(images)
         embedding = self.head(feature_map)
         embedding = F.normalize(embedding, axis=1)
-        return embedding
+        if return_mat3x3s:
+            return embedding, mat3x3s
+        else:
+            return embedding
 
     def forward(self, images, labels):
         """run forward pass and calculate loss, expected useful during training.
@@ -78,6 +91,12 @@ class FaceRecognitionModel(M.Module):
             accuracy (Tensor): top1 accuracy (range: 0~1)
             embedding （Tensor): embedding
         """
-        embedding = self.forward_embedding_only(images)
-        loss, accuracy = self.metric(embedding, labels)
+        if self.use_grid_stn:
+            embedding, mat3x3s = self.forward_embedding_only(images, return_mat3x3s=True)
+            loss, accuracy = self.metric(embedding, labels)
+            mat3x3_loss = self.stn.get_mat3x3_loss(mat3x3s)
+            loss = loss + self.loss_mat3x3_ratio * mat3x3_loss
+        else:
+            embedding = self.forward_embedding_only(images)
+            loss, accuracy = self.metric(embedding, labels)
         return loss, accuracy, embedding
