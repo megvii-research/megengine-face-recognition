@@ -70,7 +70,16 @@ class AdditiveAngularMarginSoftmax(M.Module):
         self.margin = m2
 
     def forward(self, embedding, target):
-        raise NotImplementedError("please implement me!")
+        origin_logits = self.fc(embedding)
+        one_hot_target = F.one_hot(target, self.num_class).astype("bool")
+        large_margined_logit = F.cos(F.acos(origin_logits) + self.margin)
+        small_margined_logit = origin_logits
+        margined_logit = F.where(origin_logits >= 0, large_margined_logit, small_margined_logit)
+        logits = F.where(one_hot_target, margined_logit, origin_logits)
+        logits = logits * self.scale
+        loss = F.loss.cross_entropy(logits, target)
+        accuracy = F.topk_accuracy(origin_logits, target, topk=1)
+        return loss, accuracy
 
 
 def get_loss(name):

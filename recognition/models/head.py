@@ -45,10 +45,19 @@ class BNDropoutFCBN(M.Module):
             size (int, optional): size of input feature map. defaults to 7
         """
         super().__init__()
-        raise NotImplementedError("please implement me!")
+        self.size = size
+        self.bn1 = M.BatchNorm2d(channel)
+        self.dropout = M.Dropout(drop_prob=0.4)
+        self.fc = M.Linear(channel * size * size, feature_dim)
+        self.bn2 = M.BatchNorm1d(feature_dim, affine=False)
 
     def forward(self, x):
-        raise NotImplementedError("please implement me!")
+        x = self.bn1(x)
+        x = self.dropout(x)
+        x = F.flatten(x, 1)
+        x = self.fc(x)
+        x = self.bn2(x)
+        return x
 
 
 def get_head(name):

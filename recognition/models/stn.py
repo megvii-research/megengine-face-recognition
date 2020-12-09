@@ -1,3 +1,4 @@
+import megengine as mge
 import megengine.functional as F
 import megengine.module as M
 
@@ -50,7 +51,22 @@ class STN(M.Module):
         Returns:
             mat3x3 (Tensor): perspective matrix (shape: n * 3 * 3)
         """
-        raise NotImplementedError("please implement me!")
+        x = self.stem(image)
+        x = F.avg_pool2d(x, 7)
+        x = F.flatten(x, 1)
+        x = self.fc(x)
+
+        s = self.input_size
+        # 0.01 here is a magic number. it aims to maintain identity transform at early stage of training
+        residual = x.reshape(-1, 3, 3) * 0.01
+        base = mge.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]]).astype("float32")
+        base = F.broadcast_to(base, residual.shape)
+        left_scale = mge.tensor([[s, 0, 0], [0, s, 0], [0, 0, 1]]).astype("float32")
+        left_scale = F.broadcast_to(left_scale, residual.shape)
+        right_scale = mge.tensor([[1 / s, 0, 0], [0, 1 / s, 0], [0, 0, 1]]).astype("float32")
+        right_scale = F.broadcast_to(right_scale, residual.shape)
+        mat3x3 = F.matmul(left_scale, F.matmul(base + residual, right_scale))
+        return mat3x3
 
     def forward(self, image):
         mat3x3 = self._get_mat3x3(image)
