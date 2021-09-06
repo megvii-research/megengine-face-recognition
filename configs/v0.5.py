@@ -1,3 +1,5 @@
+# Copyright (c) Megvii, Inc. and its affiliates.
+
 configs = {
     # ------------ Basic Configuration ------------
     "batch_size": 64,

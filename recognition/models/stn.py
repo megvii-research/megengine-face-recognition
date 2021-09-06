@@ -1,3 +1,5 @@
+# Copyright (c) Megvii, Inc. and its affiliates.
+
 import itertools
 
 import megengine as mge

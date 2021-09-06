@@ -1,3 +1,5 @@
+# Copyright (c) Megvii, Inc. and its affiliates.
+
 from .head import get_head
 from .loss import get_loss
 from .model import FaceRecognitionModel

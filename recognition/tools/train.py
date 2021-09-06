@@ -1,3 +1,5 @@
+# Copyright (c) Megvii, Inc. and its affiliates.
+
 import argparse
 import bisect
 import multiprocessing as mp

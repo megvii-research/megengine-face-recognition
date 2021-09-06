@@ -1,3 +1,5 @@
+# Copyright (c) Megvii, Inc. and its affiliates.
+
 """do the evaluation work with single gpu
 """
 import argparse
