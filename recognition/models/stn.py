@@ -1,3 +1,5 @@
+# Copyright (c) Megvii, Inc. and its affiliates.
+
 import megengine as mge
 import megengine.functional as F
 import megengine.module as M
